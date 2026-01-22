@@ -14,3 +14,15 @@ This project demonstrates how to deploy a basic monitoring stack using Docker Co
 
 ## Usage
 - `docker compose up -d`
+
+
+## Testing
+- Run the testing script to verify all services:
+```bash
+
+# Make script executable (first time only)
+chmod +x docker-compose-test.sh
+
+# Run tests
+./docker-compose-test.sh
+```

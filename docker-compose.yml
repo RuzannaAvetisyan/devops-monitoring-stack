@@ -10,7 +10,7 @@ services:
     networks:
       - monitoring
     restart: unless-stopped
-
+depends_on: - promtheus
   grafana:
     image: grafana/grafana:latest
     container_name: grafana

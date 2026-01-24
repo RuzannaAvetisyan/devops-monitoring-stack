@@ -3,7 +3,7 @@ name: Deploy Monitoring Stack
 on:
   push:
     branches:
-      - main
+      - '**'
   pull_request:
     branches:
       - main

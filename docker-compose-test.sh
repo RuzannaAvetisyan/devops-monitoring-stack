@@ -45,7 +45,6 @@ WAIT_TIME=0
 CONTAINERS=("prometheus" "grafana" "node-exporter")
 while [ $WAIT_TIME -lt $TIMEOUT ]; do
     ALL_RUNNING=true
-
     for container in "${CONTAINERS[@]}"; do
         if [ "$(docker inspect -f '{{.State.Running}}' $container 2>/dev/null)" != "true" ]; then
             ALL_RUNNING=false
@@ -70,24 +69,36 @@ fi
 # Test 6: Check endpoints
 echo "Test 6: Testing service endpoints..."
 
-if curl -f http://localhost:9090 >/dev/null 2>&1; then
-    echo "OK: Prometheus is accessible on port 9090"
-else
-    echo "ERROR: Prometheus endpoint check failed"
+# Function to check endpoint with retries
+check_endpoint() {
+    local url=$1
+    local service=$2
+    local max_attempts=5
+    local attempt=1
+
+    while [ $attempt -le $max_attempts ]; do
+        if curl -f $url >/dev/null 2>&1; then
+            echo "OK: $service is accessible"
+            return 0
+        fi
+        sleep 2
+        attempt=$((attempt + 1))
+    done
+
+    echo "ERROR: $service endpoint check failed after $max_attempts attempts"
+    return 1
+}
+
+# Check each endpoint
+if ! check_endpoint "http://localhost:9090" "Prometheus on port 9090"; then
     exit 1
 fi
 
-if curl -f http://localhost:3000 >/dev/null 2>&1; then
-    echo "OK: Grafana is accessible on port 3000"
-else
-    echo "ERROR: Grafana endpoint check failed"
+if ! check_endpoint "http://localhost:3000" "Grafana on port 3000"; then
     exit 1
 fi
 
-if curl -f http://localhost:9100/metrics >/dev/null 2>&1; then
-    echo "OK: Node Exporter is accessible on port 9100"
-else
-    echo "ERROR: Node Exporter endpoint check failed"
+if ! check_endpoint "http://localhost:9100/metrics" "Node Exporter on port 9100"; then
     exit 1
 fi
 

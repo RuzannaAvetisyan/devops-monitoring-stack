@@ -11,3 +11,6 @@ This project demonstrates how to deploy a basic monitoring stack using Docker Co
 ## Requirements
 - Docker
 - Docker Compose
+
+## Usage
+- `docker compose up -d`

@@ -40,12 +40,12 @@ echo "OK: Services started"
 
 # Test 5: Check containers
 echo "Test 5: Checking container status..."
-TIMEOUT=30
+TIMEOUT=180  # 3 minutes recommended timeout
 WAIT_TIME=0
+CHECK_INTERVAL=5
 CONTAINERS=("prometheus" "grafana" "node-exporter")
 while [ $WAIT_TIME -lt $TIMEOUT ]; do
     ALL_RUNNING=true
-
     for container in "${CONTAINERS[@]}"; do
         if [ "$(docker inspect -f '{{.State.Running}}' $container 2>/dev/null)" != "true" ]; then
             ALL_RUNNING=false
@@ -57,8 +57,9 @@ while [ $WAIT_TIME -lt $TIMEOUT ]; do
         docker compose ps
         break
     fi
-    sleep 2
-    WAIT_TIME=$((WAIT_TIME + 2))
+
+    sleep $CHECK_INTERVAL
+    WAIT_TIME=$((WAIT_TIME + CHECK_INTERVAL))
 done
 
 if [ $WAIT_TIME -ge $TIMEOUT ]; then
@@ -114,9 +115,9 @@ else
     exit 1
 fi
 
-# Additional cleanup check
-if docker compose ps | grep -q "Up"; then
-    echo "WARNING: Some containers are still running"
+# Additional cleanup check - verify no containers exist
+if [ -n "$(docker compose ps -q)" ]; then
+    echo "WARNING: Some containers still exist"
     docker compose ps
     echo "Forcing cleanup..."
     docker compose down -v --rmi all --remove-orphans

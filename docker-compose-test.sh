@@ -65,6 +65,7 @@ done
 if [ $WAIT_TIME -ge $TIMEOUT ]; then
     echo "ERROR: Timeout waiting for containers to start"
     docker compose ps
+    docker compose logs
     exit 1
 fi
 
@@ -77,13 +78,14 @@ check_endpoint() {
     local service=$2
     local max_attempts=5
     local attempt=1
+    local retry_interval=2
 
     while [ $attempt -le $max_attempts ]; do
         if curl -f $url >/dev/null 2>&1; then
             echo "OK: $service is accessible"
             return 0
         fi
-        sleep 2
+        sleep $retry_interval
         attempt=$((attempt + 1))
     done
 

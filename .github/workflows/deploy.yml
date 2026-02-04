@@ -1,0 +1,38 @@
+name: Deploy Monitoring Stack
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Make test script executable
+        run: chmod +x docker-compose-test.sh
+
+      - name: Run tests
+        run: ./docker-compose-test.sh
+
+      - name: Show container logs on failure
+        if: failure()
+        run: |
+          echo "=== Prometheus logs ==="
+          docker compose logs prometheus
+          echo "=== Grafana logs ==="
+          docker compose logs grafana
+          echo "=== Node Exporter logs ==="
+          docker compose logs node-exporter
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down -v

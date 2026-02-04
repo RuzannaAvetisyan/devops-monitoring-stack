@@ -1,6 +1,11 @@
 name: Deploy with Public Access
 on:
   workflow_dispatch:
+    inputs:
+      duration:
+        description: 'How long to keep tunnel open (minutes)'
+        required: false
+        default: '30'
 
 jobs:
   deploy:

@@ -1,2 +1,129 @@
-# Environment variables
+############################
+# OS / Editor junk
+############################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+*.tmp
+*.log
+
+############################
+# Environment & secrets
+############################
 .env
+.env.*
+!.env.example
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+secrets/
+credentials/
+*.tfvars
+*.auto.tfvars
+
+############################
+# Docker
+############################
+**/docker-compose.override.yml
+**/.docker/
+**/.dockerignore
+**/container-data/
+**/volumes/
+**/data/
+
+############################
+# CI / Build artifacts
+############################
+dist/
+build/
+out/
+target/
+coverage/
+reports/
+artifacts/
+
+############################
+# Python
+############################
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.eggs/
+.venv/
+venv/
+ENV/
+pip-wheel-metadata/
+.pytest_cache/
+.mypy_cache/
+
+############################
+# Node.js
+############################
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+.npm/
+.yarn/
+
+############################
+# Terraform
+############################
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+############################
+# Ansible
+############################
+*.retry
+ansible.log
+inventory.ini
+inventory.yml
+.vault_pass
+
+############################
+# Logs & runtime
+############################
+logs/
+*.log
+*.pid
+*.sock
+
+############################
+# Backups & dumps
+############################
+*.sql
+*.dump
+*.bak
+*.tar
+*.tar.gz
+*.zip
+
+############################
+# Temporary / local
+############################
+tmp/
+temp/
+.cache/
+.local/

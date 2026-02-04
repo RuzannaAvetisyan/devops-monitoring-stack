@@ -6,6 +6,13 @@ on:
         description: 'How long to keep tunnel open (minutes)'
         required: false
         default: '30'
+      branch:
+        description: 'Branch to deploy'
+        required: false
+        default: 'feature/github-actions-deploy'
+  push:
+    branches:
+      - feature/github-actions-deploy
 
 jobs:
   deploy:

@@ -1,0 +1,15 @@
+name: Stop
+on:
+  workflow_dispatch:
+
+jobs:
+  stop:
+    runs-on: self-hosted
+    if: github.actor == 'RuzannaAvetisyan' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Stop services
+        run: docker compose down
+
+      - name: Verify
+        run: docker compose ps

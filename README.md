@@ -1,19 +1,18 @@
 # DevOps Monitoring Stack
 
-Complete monitoring solution with Prometheus, Grafana, and Node Exporter.
+Complete monitoring solution with Prometheus, Grafana, Node Exporter and automated GitHub Actions deployment.
 
 ## Quick Start
 
 ```bash
-# Clone and start
 git clone https://github.com/RuzannaAvetisyan/devops-monitoring-stack.git
 cd devops-monitoring-stack
 docker compose up -d
-
-# Wait 30 seconds, then access:
-# Grafana: http://localhost:3000 (admin/admin)
-# Prometheus: http://localhost:9090
 ```
+
+Access dashboards:
+- **Grafana**: http://localhost:3000 (admin/admin)
+- **Prometheus**: http://localhost:9090
 
 ## What's Included
 
@@ -21,29 +20,69 @@ docker compose up -d
 - **Prometheus** (port 9090) - Metrics storage and querying
 - **Node Exporter** (port 9100) - System metrics collection
 
+## GitHub Actions Deployment
 
-## 🛠 Common Commands
+### Setup Runner (one-time)
 
-```bash
-# Start services
-docker compose up -d
+Follow [GitHub's official guide](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners) or:
 
-# Stop services
-docker compose down
-
-# View logs
-docker compose logs -f
-
-# Restart services
-docker compose restart
+```
+GitHub → Settings → Actions → Runners → New self-hosted runner
 ```
 
-## 📊 Pre-built Dashboards
+### Deploy
 
-**Grafana** includes:
-- **Node Exporter Full** - Complete system monitoring (CPU, Memory, Disk, Network)
+1. Start runner in terminal
+2. GitHub → Actions → **Deploy** → Run workflow
+3. Access: http://localhost:3000
 
-Navigate to: **Dashboards** → **Browse** → **Node Exporter Monitoring**
+### Stop
+
+1. Services: GitHub → Actions → **Stop** → Run workflow
+2. Start runner in terminal
+
+## Monitoring Dashboard
+
+**Node Exporter Monitoring** dashboard includes:
+- CPU Usage (%)
+- Memory Usage (%)
+- Disk Usage by Mountpoint (%)
+- Network Traffic (RX/TX)
+
+Navigate: **Dashboards** → **Node Exporter Monitoring**
+
+## Metrics
+
+### CPU
+```promql
+100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+```
+
+### Memory
+```promql
+(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
+```
+
+### Disk
+```promql
+(1 - (node_filesystem_avail_bytes{device!~"tmpfs|loop.*",fstype!~"tmpfs|overlay"} / 
+      node_filesystem_size_bytes{device!~"tmpfs|loop.*",fstype!~"tmpfs|overlay"})) * 100
+```
+
+### Network
+```promql
+rate(node_network_receive_bytes_total{device!~"lo|veth.*"}[5m])  # RX
+rate(node_network_transmit_bytes_total{device!~"lo|veth.*"}[5m]) # TX
+```
+
+## Commands
+
+```bash
+docker compose up -d        # Start
+docker compose down         # Stop
+docker compose logs -f      # View logs
+docker compose ps           # Status
+```
 
 ## Troubleshooting
 
@@ -53,32 +92,33 @@ docker compose logs
 
 # Port already in use?
 lsof -i :3000
-lsof -i :9090
 
 # Grafana shows "No data"?
 curl http://localhost:9090/-/healthy
 # Check: http://localhost:9090/targets
+
+# Runner issues
+cd ~/actions-runner
+./config.sh remove --token OLD_TOKEN
+./config.sh --url REPO_URL --token NEW_TOKEN
 ```
 
 ## Project Structure
 
 ```
 devops-monitoring-stack/
-├── .github/workflows/       # GitHub Actions
-├── grafana/                 # Grafana config & dashboards
-├── prometheus/              # Prometheus config
-└── docker-compose.yml       # Services definition
+├── .github/workflows/       # CI/CD workflows
+├── grafana/                 # Config & dashboards
+├── prometheus/              # Config
+└── docker-compose.yml       # Services
 ```
 
-## Useful PromQL Queries
+## CI/CD
 
-```promql
-# CPU usage %
-100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+- **Deploy** - Starts monitoring stack (main branch, manual)
+- **Stop** - Stops services (main branch, manual)
+- **Test** - Automated tests on every push
 
-# Memory usage %
-100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes))
+---
 
-# Disk usage %
-100 - ((node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100)
-```
+**Documentation**: [Prometheus](https://prometheus.io/docs/) | [Grafana](https://grafana.com/docs/) | [Node Exporter](https://github.com/prometheus/node_exporter)

@@ -39,7 +39,23 @@ GitHub → Settings → Actions → Runners → New self-hosted runner
 ### Stop
 
 1. Services: GitHub → Actions → **Stop** → Run workflow
-2. Start runner in terminal
+2. Stop runner in terminal
+
+### ⚠️ Security Warning
+
+**This demo uses a self-hosted runner with a public repository - NOT recommended for production.**
+
+Self-hosted runners on public repos are unsafe because anyone can fork your repo and execute malicious code on your machine via pull requests.
+
+**For production:**
+- Use private repositories, OR
+- Use GitHub-hosted runners
+
+**Demo safety:**
+- Keep runner offline when not demonstrating
+- Only run workflows you've reviewed
+
+[More info](https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#hardening-for-self-hosted-runners)
 
 ## Monitoring Dashboard
 

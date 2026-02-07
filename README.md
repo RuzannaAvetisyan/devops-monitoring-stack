@@ -2,6 +2,11 @@
 
 Complete monitoring solution with Prometheus, Grafana, Node Exporter and automated GitHub Actions deployment.
 
+## Requirements
+
+- Docker & Docker Compose (latest)
+- Self-hosted runner (optional, for GitHub Actions)
+
 ## Quick Start
 
 ```bash
